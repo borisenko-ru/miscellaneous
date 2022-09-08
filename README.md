@@ -1,4 +1,4 @@
-# miscellaneous
+# Miscellaneous
 Repository of miscellaneous scripts
 - h5 file finite data to csv [exractor](https://github.com/borisenko-ru/miscellaneous/blob/main/h5.py)
 
