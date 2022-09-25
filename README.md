@@ -1,6 +1,7 @@
 # Miscellaneous
 Repository of miscellaneous scripts
 - h5 file finite data to csv [exractor](https://github.com/borisenko-ru/miscellaneous/blob/main/h5.py)
+- 77th general debate of the United Nations General Assembly. [Speech statistics](https://github.com/borisenko-ru/miscellaneous/blob/main/un_ga_speech_stat.ipynb) by country
 
 ## Contacts
 
