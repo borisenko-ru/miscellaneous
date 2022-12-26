@@ -1,10 +1,10 @@
 # Miscellaneous
 Repository of miscellaneous scripts
-1. h5 file finite data to csv [exractor](https://github.com/borisenko-ru/miscellaneous/tree/main/h5)
+1. h5 file finite data to csv [exractor](https://github.com/borisenko-ru/miscellaneous/tree/main/01_h5)
 2. Sample [python class](https://github.com/borisenko-ru/miscellaneous/tree/main/02_class_human)
 3. [Speech statistics](https://github.com/borisenko-ru/miscellaneous/tree/main/03_un_ga_speech_stat) by country at 77th general debate of the United Nations General Assembly
-4. Script to [rename files](https://github.com/borisenko-ru/miscellaneous/tree/main/rename_files) in folder
-5. Script to [extract parameters](https://github.com/borisenko-ru/miscellaneous/tree/main/04_fracdata) from a [hydraulic fracturing](https://www.youtube.com/watch?v=jUrGomRLnUA) job recording data
+4. Script to [rename files](https://github.com/borisenko-ru/miscellaneous/tree/main/04_rename_files) in folder
+5. Script to [extract parameters](https://github.com/borisenko-ru/miscellaneous/tree/main/05_fracdata) from a [hydraulic fracturing](https://www.youtube.com/watch?v=jUrGomRLnUA) job recording data
 
 ## Contacts
 
