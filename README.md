@@ -3,7 +3,7 @@ Repository of miscellaneous scripts
 1. h5 file finite data to csv [exractor](https://github.com/borisenko-ru/miscellaneous/tree/main/h5.py)
 2. Script to [rename files](https://github.com/borisenko-ru/miscellaneous/tree/main/02_class_human) in folder
 3. 77th general debate of the United Nations General Assembly. [Speech statistics](https://github.com/borisenko-ru/miscellaneous/tree/main/03_un_ga_speech_stat) by country
-4. Script to [extract parameters])https://github.com/borisenko-ru/miscellaneous/tree/main/04_fracdata) from a [hydraulic fracturing](https://www.youtube.com/watch?v=jUrGomRLnUA) job recording data
+4. Script to [extract parameters](https://github.com/borisenko-ru/miscellaneous/tree/main/04_fracdata) from a [hydraulic fracturing](https://www.youtube.com/watch?v=jUrGomRLnUA) job recording data
 
 ## Contacts
 
