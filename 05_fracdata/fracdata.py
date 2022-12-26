@@ -1,7 +1,14 @@
+# from numba import jit, cuda
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import sys
+
+if not sys.warnoptions:
+    import warnings
+    warnings.simplefilter("ignore")
 
 
 def line_intersection(line1, line2):
@@ -47,11 +54,11 @@ def isip():
     return round(line_intersection((a, b), (c, d))[1])
 
 
+# @jit
 def fracdata_values():
 
-    signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'],
-                         skiprows=[1, 2]).dropna()
-#    signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
+    signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'], skiprows=[1, 2]).dropna()
+    signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
 
     pressure_data = []
     rate_data = []
@@ -98,16 +105,15 @@ def fracdata_values():
 #              f'WHP: {pressures[0]}. ISIP: {isip()}')
 #    plt.show()
 
-#    return pd.Series(data=[filename, soj, eoj, pressures[0], pressures[-5], rates[-5], pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
-#                     index=parameters)
-    return pd.Series(data=[filename, pressures[0], pressures[-5], rates[-5], pressures[-3], rates[-3], pressures[-1], rates[-1]],
+    return pd.Series(data=[filename, soj, eoj, pressures[0], pressures[-5], rates[-5], pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
                      index=parameters)
+
+
 if __name__ == '__main__':
 
-#    parameters = ['Job', 'SOJ', 'EOJ', 'Initial WHP', 'Pad pressure', 'Pad rate', 'Last pressure before drop',
-#                  'Last rate before drop', 'Last pressure', 'Last rate', 'ISIP']
-    parameters = ['Job', 'Initial WHP', 'Pad pressure', 'Pad rate', 'Last pressure before drop',
-                  'Last rate before drop', 'Last pressure', 'Last rate']
+    parameters = ['Job', 'SOJ', 'EOJ', 'Initial WHP', 'Pad pressure', 'Pad rate', 'Last pressure before drop',
+                  'Last rate before drop', 'Last pressure', 'Last rate', 'ISIP']
+
     fracdata_table = pd.DataFrame(index=parameters)
     for root, dir, files in os.walk(input('Enter fracturing job data folder path: ')):
         for filename in files:
@@ -116,10 +122,11 @@ if __name__ == '__main__':
                 fracdata_table = pd.concat([fracdata_table, fracdata_values()], axis=1)
                 print(f'Interpretation result for {filename} is done')
     fracdata_table.to_csv('fracdata.csv', header=False)
+    print('Full interpretation has been saved to', os.getcwd())
+
+#    cuda.profile_stop()
 
 #    with open('fracdata.csv', 'w', newline='') as csvfile:
 #        write = csv.writer(csvfile)
 #    write.writerow(fields)
 #    write.writerows(rows)
-
-    print('Full interpretation has been saved to', os.getcwd())
