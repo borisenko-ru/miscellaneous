@@ -1,4 +1,4 @@
-# from numba import jit, cuda
+from numba import jit, cuda
 
 import pandas as pd
 import numpy as np
@@ -54,7 +54,7 @@ def isip():
     return round(line_intersection((a, b), (c, d))[1])
 
 
-# @jit
+@jit
 def fracdata_values():
 
     signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'], skiprows=[1, 2]).dropna()
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     fracdata_table.to_csv('fracdata.csv', header=False)
     print('Full interpretation has been saved to', os.getcwd())
 
-#    cuda.profile_stop()
+    cuda.profile_stop()
 
 #    with open('fracdata.csv', 'w', newline='') as csvfile:
 #        write = csv.writer(csvfile)
