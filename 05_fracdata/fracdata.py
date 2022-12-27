@@ -1,14 +1,15 @@
-from numba import jit, cuda
+#from numba import jit, cuda
+#cuda.select_device(0)
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import sys
+#import sys
 
-if not sys.warnoptions:
-    import warnings
-    warnings.simplefilter("ignore")
+#if not sys.warnoptions:
+#    import warnings
+#    warnings.simplefilter("ignore")
 
 
 def line_intersection(line1, line2):
@@ -54,7 +55,7 @@ def isip():
     return round(line_intersection((a, b), (c, d))[1])
 
 
-@jit
+# @jit
 def fracdata_values():
 
     signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'], skiprows=[1, 2]).dropna()
@@ -123,8 +124,6 @@ if __name__ == '__main__':
                 print(f'Interpretation result for {filename} is done')
     fracdata_table.to_csv('fracdata.csv', header=False)
     print('Full interpretation has been saved to', os.getcwd())
-
-    cuda.profile_stop()
 
 #    with open('fracdata.csv', 'w', newline='') as csvfile:
 #        write = csv.writer(csvfile)
