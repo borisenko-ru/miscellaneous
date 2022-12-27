@@ -1,13 +1,11 @@
-#from numba import jit, cuda
-#cuda.select_device(0)
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-#import sys
-
-#if not sys.warnoptions:
+# from numba import jit, cuda
+# cuda.select_device(0)
+# import sys
+# if not sys.warnoptions:
 #    import warnings
 #    warnings.simplefilter("ignore")
 
@@ -69,14 +67,16 @@ def fracdata_values():
     i = 0
     step = 30
     zero_rate_threshold = 0.5
-    std_rate_threshold = 1
+    rate_stdev_threshold = 1
     percentiles_top = 90
     percentiles_btm = 10
 
     while i < len(signal):
         rate_data.append(signal.SLURRYRATE.loc[i:i+step])
         pressure_data.append(signal['TR_PRESS'].loc[i:i+step])
-        if signal.SLURRYRATE.loc[i:i+step].astype(float).std() > std_rate_threshold:
+        if signal.SLURRYRATE.loc[i:i+step].astype(float).std() > rate_stdev_threshold:
+#        if signal.SLURRYRATE.loc[i:i+step].astype(float).std() > rate_stdev_threshold and \
+#            abs(signal.SLURRYRATE.loc[i:i+step].astype(float).mean() - signal.SLURRYRATE.astype(float).max()) < 10:
             rates.append(round(signal.SLURRYRATE.loc[i:i+step].describe(percentiles=[percentiles_btm/100])[str(percentiles_btm)+'%']))
             rates.append(round(signal.SLURRYRATE.loc[i:i+step].describe(percentiles=[percentiles_top/100])[str(percentiles_top)+'%']))
             pressures.append(round(signal['TR_PRESS'].loc[i:i+step].describe(percentiles=[percentiles_btm/100])[str(percentiles_btm)+'%']))
@@ -98,7 +98,7 @@ def fracdata_values():
 #    fig, ax = plt.subplots()
 #    ax.boxplot(rate_data)
 #    ax.boxplot(pressure_data)
-    #    plt.plot(signal)
+#    plt.plot(signal)
 
 #    plt.title(f'Last rate before drop: {rates[-3]}. Last rate: {rates[-1]}.\n'
 #              f'Last pressure before drop: {pressures[-3]}. Last pressure: {pressures[-1]}.\n'
