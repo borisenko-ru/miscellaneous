@@ -26,6 +26,7 @@ def line_intersection(line1, line2):
     y = det(d, ydiff) / div
     return x, y
 
+
 def isip():
 
     signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'],
