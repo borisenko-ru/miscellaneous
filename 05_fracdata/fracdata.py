@@ -26,7 +26,6 @@ def line_intersection(line1, line2):
     y = det(d, ydiff) / div
     return x, y
 
-
 def isip():
 
     signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'],
@@ -56,7 +55,7 @@ def isip():
 # @jit
 def fracdata_values():
 
-    signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'], skiprows=[1, 2]).dropna()
+    signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'], skiprows=[1, 2]).dropna()
     signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
 
     pressure_data = []
@@ -64,19 +63,36 @@ def fracdata_values():
     pressures = []
     rates = []
 
-    i = 0
     step = 30
-    zero_rate_threshold = 0.5
+    zero_rate_threshold = signal['SLURRYRATE'].max() * 0.15
+    zero_prop_threshold = signal['PROP_CON'].max() * 0.15
+    sample_gap = 30
     rate_stdev_threshold = 1
     percentiles_top = 90
     percentiles_btm = 10
+
+    i = 0
+    breakpoint = 0
+    while i < len(signal):
+        if signal['PROP_CON'].loc[i].astype(float) > zero_prop_threshold and breakpoint == 0:
+            pad_rate = signal.SLURRYRATE.loc[i-sample_gap:i].median()
+            pad_pressure = signal['TR_PRESS'].loc[i-sample_gap:i].median()
+            breakpoint = 1
+        i += 1
+
+    i = 0
+    breakpoint = 0
+    while i < len(signal) / 2:
+        if signal['SLURRYRATE'].loc[i].astype(float) > zero_rate_threshold and breakpoint == 0:
+            initial_whp = signal['TR_PRESS'].loc[i-sample_gap:i].median()
+            breakpoint = 1
+        i += 1
+    i = 0
 
     while i < len(signal):
         rate_data.append(signal.SLURRYRATE.loc[i:i+step])
         pressure_data.append(signal['TR_PRESS'].loc[i:i+step])
         if signal.SLURRYRATE.loc[i:i+step].astype(float).std() > rate_stdev_threshold:
-#        if signal.SLURRYRATE.loc[i:i+step].astype(float).std() > rate_stdev_threshold and \
-#            abs(signal.SLURRYRATE.loc[i:i+step].astype(float).mean() - signal.SLURRYRATE.astype(float).max()) < 10:
             rates.append(round(signal.SLURRYRATE.loc[i:i+step].describe(percentiles=[percentiles_btm/100])[str(percentiles_btm)+'%']))
             rates.append(round(signal.SLURRYRATE.loc[i:i+step].describe(percentiles=[percentiles_top/100])[str(percentiles_top)+'%']))
             pressures.append(round(signal['TR_PRESS'].loc[i:i+step].describe(percentiles=[percentiles_btm/100])[str(percentiles_btm)+'%']))
@@ -106,9 +122,10 @@ def fracdata_values():
 #              f'WHP: {pressures[0]}. ISIP: {isip()}')
 #    plt.show()
 
-    return pd.Series(data=[filename, soj, eoj, pressures[0], pressures[-5], rates[-5], pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
+#    return pd.Series(data=[filename, soj, eoj, pressures[0], pressures[-5], rates[-5], pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
+#                     index=parameters)
+    return pd.Series(data=[filename, soj, eoj, initial_whp, pad_pressure, pad_rate, pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
                      index=parameters)
-
 
 if __name__ == '__main__':
 
