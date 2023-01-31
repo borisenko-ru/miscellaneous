@@ -27,7 +27,7 @@ def line_intersection(line1, line2):
     return x, y
 
 
-def isip():
+ def isip():
 
     signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'],
                          skiprows=[1, 2]).dropna()
