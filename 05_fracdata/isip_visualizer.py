@@ -94,10 +94,6 @@ while k < len(pressure):
         pressure_threshold_right = k
     k += 1
 
-print(pressure_threshold_left)
-print(pressure_threshold_right)
-print(pre_stop_point)
-
 # Implement first-degree polinomial (linear regression)
 lr = np.polyfit(np.arange(pressure_threshold_left, pressure_threshold_right), pressure[pressure_threshold_left:pressure_threshold_right], 1)
 mymodel = np.poly1d(lr)

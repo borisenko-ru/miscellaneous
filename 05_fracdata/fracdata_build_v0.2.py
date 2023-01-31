@@ -1,77 +1,17 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import os
-# from numba import jit, cuda
-# cuda.select_device(0)
-# import sys
-# if not sys.warnoptions:
-#    import warnings
-#    warnings.simplefilter("ignore")
 
-
-def line_intersection(line1, line2):
-    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
-    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
-
-    def det(a, b):
-        return a[0] * b[1] - a[1] * b[0]
-
-    div = det(xdiff, ydiff)
-    if div == 0:
-        raise Exception('lines do not intersect')
-
-    d = (det(*line1), det(*line2))
-    x = det(d, xdiff) / div
-    y = det(d, ydiff) / div
-    return x, y
-
-
- def isip():
-
-    signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE'],
-                         skiprows=[1, 2]).dropna()
-    signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
-    signal['INDEX'] = range(0, len(signal))
-
-    p = np.polyfit(signal['INDEX'].loc[5570:5630], signal['TR_PRESS'].loc[5570:5630], 1)
-
-#    For future visualization
-#    plt.scatter(signal['INDEX'].loc[5570:5630], signal['TR_PRESS'].loc[5570:5630], c='gray', marker='o',
-#        edgecolors='k', s=10)
-#    plt.plot(np.array(plt.xlim()), p[1] + p[0] * np.array(plt.xlim()))
-#    plt.plot([5570, 5570], [5000, 8000])
-
-#    plt.plot(signal['INDEX'], signal['TR_PRESS'])
-#    plt.show()
-
-    a = np.array([5570, 5000])
-    b = np.array([5570, 8000])
-    c = np.array([np.array(plt.xlim())[1], p[1] + p[0] * np.array(plt.xlim())[1]])
-    d = np.array([np.array(plt.xlim())[0], p[1] + p[0] * np.array(plt.xlim())[0]])
-
-    return round(line_intersection((a, b), (c, d))[1])
-
-
-# @jit
 def fracdata_values():
 
-    signal = pd.read_csv(filepath, delimiter='\t', low_memory=False, usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'], skiprows=[1, 2]).dropna()
-    signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
-
-    pressure_data = []
-    rate_data = []
-    pressures = []
-    rates = []
-
+    pressure_data, rate_data, pressures, rates = [], [], [], []
     step = 30
-    zero_rate_threshold = signal['SLURRYRATE'].max() * 0.15
-    zero_prop_threshold = signal['PROP_CON'].max() * 0.15
     sample_gap = 30
     rate_stdev_threshold = 1
     percentiles_top = 90
     percentiles_btm = 10
 
+    # Calculate PAD_RATE and PAD_PRESSURE
     i = 0
     breakpoint = 0
     while i < len(signal):
@@ -81,6 +21,7 @@ def fracdata_values():
             breakpoint = 1
         i += 1
 
+    # Calculate INITIAL_WHP
     i = 0
     breakpoint = 0
     while i < len(signal) / 2:
@@ -90,6 +31,7 @@ def fracdata_values():
         i += 1
     i = 0
 
+    # Calculate 'Last pressure before drop', 'Last rate before drop', 'Last pressure', and 'Last rate'
     while i < len(signal):
         rate_data.append(signal.SLURRYRATE.loc[i:i+step])
         pressure_data.append(signal['TR_PRESS'].loc[i:i+step])
@@ -100,32 +42,67 @@ def fracdata_values():
             pressures.append(round(signal['TR_PRESS'].loc[i:i+step].describe(percentiles=[percentiles_top/100])[str(percentiles_top)+'%']))
         i += step + 1
 
+    # Calculate START_OF_JOB
     i = 0
     while i < len(signal) / 2:
         if signal.SLURRYRATE.loc[i] < zero_rate_threshold:
             soj = signal.AcqTime.loc[i]
         i += 1
 
+    # Calculate END_OF_JOB
     i = 0
     while i < len(signal):
         if signal.SLURRYRATE.loc[i] > zero_rate_threshold:
             eoj = signal.AcqTime.loc[i+1]
         i += 1
 
-#    fig, ax = plt.subplots()
-#    ax.boxplot(rate_data)
-#    ax.boxplot(pressure_data)
-#    plt.plot(signal)
+    # ISIP_STEP_01
+    i = 0
+    pre_stop_point = 0
+    while signal['SLURRYRATE'].iloc[i + round(len(signal['SLURRYRATE']) / 2)] > 0:
+        i += 1
+        pre_stop_point = i - 100
 
-#    plt.title(f'Last rate before drop: {rates[-3]}. Last rate: {rates[-1]}.\n'
-#              f'Last pressure before drop: {pressures[-3]}. Last pressure: {pressures[-1]}.\n'
-#              f'Pad rate: {rates[-5]}. Pad pressure: {pressures[-5]}\n'
-#              f'WHP: {pressures[0]}. ISIP: {isip()}')
-#    plt.show()
+    # ISIP_STEP_02. Choose ISIP oscillations range
+    isip_range = len(signal['SLURRYRATE']) - pre_stop_point
+    pressure = np.array(signal['TR_PRESS'].iloc[pre_stop_point:].to_list())
+    rate = np.array(signal['SLURRYRATE'].iloc[pre_stop_point:].to_list())
 
-#    return pd.Series(data=[filename, soj, eoj, pressures[0], pressures[-5], rates[-5], pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
-#                     index=parameters)
-    return pd.Series(data=[filename, soj, eoj, initial_whp, pad_pressure, pad_rate, pressures[-3], rates[-3], pressures[-1], rates[-1], isip()],
+    # ISIP_STEP_03
+    i = 0
+    eoj_point = 0
+    while rate[i] > 0:
+        i += 1
+        eoj_point = i
+
+    # ISIP_STEP_04
+    i = 0
+    pressure_threshold_left = 0
+    while pressure[i] > pressure[eoj_point]:
+        i += 1
+        pressure_threshold_left = i
+
+    # ISIP_STEP_05
+    i = 0
+    step = 3
+    pressure_stdev_threshold = 349
+    pressure_threshold_right = 0
+    while i < len(pressure):
+        if pressure[i:i + step].std() > pressure_stdev_threshold:
+            pressure_threshold_right = i
+        i += 1
+
+    # ISIP_STEP_06. Implement first-degree polinomial (linear regression)
+    lr = np.polyfit(np.arange(pressure_threshold_left, pressure_threshold_right),
+                    pressure[pressure_threshold_left:pressure_threshold_right], 1)
+    mymodel = np.poly1d(lr)
+    myline = np.linspace(pressure_threshold_left, pressure_threshold_right,
+                         pressure_threshold_right - pressure_threshold_left)  # Draw the line
+
+    # ISIP_STEP_07
+    isip_value = round(mymodel(myline)[int(round(len(mymodel(myline)) / 2))],0)
+
+    return pd.Series(data=[filename, soj, eoj, initial_whp, pad_pressure, pad_rate, pressures[-3], rates[-3], pressures[-1], rates[-1], isip_value],
                      index=parameters)
 
 if __name__ == '__main__':
@@ -137,13 +114,18 @@ if __name__ == '__main__':
     for root, dir, files in os.walk(input('Enter fracturing job data folder path: ')):
         for filename in files:
             if filename.endswith('.txt'):
-                filepath = root + '\\' + filename
-                fracdata_table = pd.concat([fracdata_table, fracdata_values()], axis=1)
-                print(f'Interpretation result for {filename} is done')
+                if True:
+                    try:
+                        filepath = root + '\\' + filename
+                        signal = pd.read_csv(filepath, delimiter='\t', low_memory=False,
+                                             usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'],
+                                             skiprows=[1, 2]).dropna()
+                        signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
+                        zero_rate_threshold = signal['SLURRYRATE'].max() * 0.15
+                        zero_prop_threshold = signal['PROP_CON'].max() * 0.15
+                        fracdata_table = pd.concat([fracdata_table, fracdata_values()], axis=1)
+                        print(f'Interpretation result for {filename} is done')
+                    except:
+                        pass
     fracdata_table.to_csv('fracdata.csv', header=False)
     print('Full interpretation has been saved to', os.getcwd())
-
-#    with open('fracdata.csv', 'w', newline='') as csvfile:
-#        write = csv.writer(csvfile)
-#    write.writerow(fields)
-#    write.writerows(rows)
