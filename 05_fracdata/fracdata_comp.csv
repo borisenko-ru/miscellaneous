@@ -1,0 +1,20 @@
+Job,HMYM-433314 Stage 49 ASCII.txt,HZEM-141204 Stage 10 ASCII.txt,,Well name,HMYM-433314 Stage 49 ASCII
+SOJ,11/30/2022 0:22,6/12/2022 19:42,,SOJ,30/11/2022  0:21:32 PM
+EOJ,11/30/2022 1:55,6/12/2022 21:19,,SOJ X,54
+Initial WHP,6394,7244,,EOJ,2/12/2022 1:55
+Pad pressure,9465,10530,,EOJ X,5677
+Pad rate,92,91.9,,Initial WHP,5901
+Last pressure before drop,9826,8991,,Initial WHP X,54
+Last rate before drop,92,61,,PAD Pressure,9504
+Last pressure,8595,8538,,PAD Pressure X,979
+Last rate,62,3,,PAD Rate,91.9
+ISIP,6780,11129,,PAD Rate X,979
+,,,,Last Pressure before drop,9829
+,,,,Last Pressure before drop X,5570
+,,,,Last Rate before drop,92.2
+,,,,Last Rate before drop X,5575
+,,,,Last Pressure,8594
+,,,,Last Pressure X,5666
+,,,,Last Rate,62.1
+,,,,Last Rate X,5670
+,,,,ISIP,6590.947267
