@@ -114,18 +114,23 @@ if __name__ == '__main__':
     for root, dir, files in os.walk(input('Enter fracturing job data folder path: ')):
         for filename in files:
             if filename.endswith('.txt'):
-                if True:
-                    try:
-                        filepath = root + '\\' + filename
-                        signal = pd.read_csv(filepath, delimiter='\t', low_memory=False,
-                                             usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'],
-                                             skiprows=[1, 2]).dropna()
-                        signal['AcqTime'] = pd.to_datetime(signal['AcqTime'])
-                        zero_rate_threshold = signal['SLURRYRATE'].max() * 0.15
-                        zero_prop_threshold = signal['PROP_CON'].max() * 0.15
-                        fracdata_table = pd.concat([fracdata_table, fracdata_values()], axis=1)
-                        print(f'Interpretation result for {filename} is done')
-                    except:
-                        pass
+                filepath = root + '\\' + filename
+                signal = pd.read_csv(filepath, delimiter='\t', low_memory=False,
+                                         usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'],
+                                         skiprows=[1, 2]).dropna()
+                try:
+                    signal['AcqTime'] = pd.to_datetime(signal['AcqTime'], format='%d/%m/%Y %H:%M:%S')
+                except:
+                    signal['AcqTime'] = pd.to_datetime(signal['AcqTime'], format='%d:%m:%Y:%H:%M:%S')
+
+                zero_rate_threshold = signal['SLURRYRATE'].max() * 0.15
+                zero_prop_threshold = signal['PROP_CON'].max() * 0.15
+
+                try:
+                    fracdata_table = pd.concat([fracdata_table, fracdata_values()], axis=1)
+                    print(f'Interpretation result for {filename} is done')
+                except:
+                    pass
+
     fracdata_table.to_csv('fracdata.csv', header=False)
     print('Full interpretation has been saved to', os.getcwd())
