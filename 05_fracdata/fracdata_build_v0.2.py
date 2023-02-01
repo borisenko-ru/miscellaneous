@@ -116,8 +116,8 @@ if __name__ == '__main__':
             if filename.endswith('.txt'):
                 filepath = root + '\\' + filename
                 signal = pd.read_csv(filepath, delimiter='\t', low_memory=False,
-                                         usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'],
-                                         skiprows=[1, 2]).dropna()
+                                     usecols=['AcqTime', 'TR_PRESS', 'SLURRYRATE', 'PROP_CON'],
+                                     skiprows=[1, 2]).dropna()
                 try:
                     signal['AcqTime'] = pd.to_datetime(signal['AcqTime'], format='%d/%m/%Y %H:%M:%S')
                 except:
