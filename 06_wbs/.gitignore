@@ -2,3 +2,5 @@ img/*
 __pycache__/*
 scheme.pptx
 wbs.csv
+clouds.py
+gaussians.png
