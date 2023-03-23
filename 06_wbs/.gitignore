@@ -2,5 +2,8 @@ img/*
 __pycache__/*
 scheme.pptx
 wbs.csv
+Ref_time_Symp.csv
 gauss.py
 gaussians.png
+gaussians_wbs.png
+gridspec.py

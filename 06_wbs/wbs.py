@@ -9,7 +9,7 @@ top_cut = Image.open('img/top_cut.png').convert('RGBA')
 btm_cut = Image.open('img/btm_cut.png').convert('RGBA')
 perf = Image.open('img/perf.png').convert('RGBA')
 
-split_max = 12
+split_max = 18
 
 def get_concat_v_multi(im_list, numbering=1, resample=Image.Resampling.BICUBIC):
     min_width = min(im.width for im in im_list)
