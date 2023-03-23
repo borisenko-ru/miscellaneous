@@ -9,18 +9,18 @@ top_cut = Image.open('img/top_cut.png').convert('RGBA')
 btm_cut = Image.open('img/btm_cut.png').convert('RGBA')
 perf = Image.open('img/perf.png').convert('RGBA')
 
-split_max = 22
+split_max = 12
 
 def get_concat_v_multi(im_list, numbering=1, resample=Image.Resampling.BICUBIC):
     min_width = min(im.width for im in im_list)
     im_list_resize = [im.resize((min_width, int(im.height * min_width / im.width)),resample=resample)
                       for im in im_list]
     total_height = sum(im.height for im in im_list_resize)
-    dst = Image.new('RGBA', (4800, 1200 * (split_max))) # (min_width, total_height))
+    dst = Image.new('RGBA', (3400, 1200 * (split_max))) # (min_width, total_height))
     pos_y = 0
     for im in im_list_resize:
         # make a blank image for the text, initialized to transparent text color
-        txt = Image.new('RGBA', [2400, 1200], (255, 255, 255, 0))
+        txt = Image.new('RGBA', [1000, 1200], (255, 255, 255, 0))
         # get a drawing context
         d = ImageDraw.Draw(txt)
         myFont = ImageFont.truetype('C:/Windows/Fonts/Arial.ttf', 300)
