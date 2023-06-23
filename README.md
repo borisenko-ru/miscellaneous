@@ -5,6 +5,8 @@ Repository of miscellaneous scripts
 3. [Speech statistics](https://github.com/borisenko-ru/miscellaneous/tree/main/03_un_ga_speech_stat) by country at 77th general debate of the United Nations General Assembly
 4. Script to [rename files](https://github.com/borisenko-ru/miscellaneous/tree/main/04_rename_files) in folder
 5. Script to [extract parameters](https://github.com/borisenko-ru/miscellaneous/tree/main/05_fracdata) from a [hydraulic fracturing](https://www.youtube.com/watch?v=jUrGomRLnUA) job recording data
+6. Script to [create wellbore schematic](https://github.com/borisenko-ru/miscellaneous/tree/main/06_wbs)
+7. Script to [create plots](https://github.com/borisenko-ru/miscellaneous/tree/main/07_plots)
 
 ## Contacts
 
@@ -15,4 +17,4 @@ Repository of miscellaneous scripts
 
 Alexey Borisenko \
 Digital Petroleum Engineer \
-2022
+2023
